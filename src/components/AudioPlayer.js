@@ -7,6 +7,7 @@ class AudioPlayer extends React.Component {
     constructor(props) {
         super(props)
         this.songList = [
+            { title: "Experience One", URL: "http://unsoundart.com/audio/5-4_Exp1b.mp3", type: "audio/mp3", artist: "JoeHoward" },
             { title: "WideOrbit Theme", URL: "http://unsoundart.com/audio/OrbitTheme.mp3", type: "audio/mp3", artist: "JoeHoward" },
             { title: "The Dark Interlude", URL: "http://unsoundart.com/audio/theDark.mp3", type: "audio/mp3", artist: "JoeHoward" },
             { title: "Lunar Lander", URL: "http://unsoundart.com/audio/LunarLander.mp3", type: "audio/mp3", artist: "JoeHoward" },
