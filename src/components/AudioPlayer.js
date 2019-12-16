@@ -6,26 +6,41 @@ import KnockoutText from './KnockoutText'
 class AudioPlayer extends React.Component {
     constructor(props) {
         super(props)
-        this.songList = [
-            { title: "Experience One", URL: "http://unsoundart.com/audio/5-4_Exp1b.mp3", type: "audio/mp3", artist: "JoeHoward" },
-            { title: "WideOrbit Theme", URL: "http://unsoundart.com/audio/OrbitTheme.mp3", type: "audio/mp3", artist: "JoeHoward" },
-            { title: "The Dark Interlude", URL: "http://unsoundart.com/audio/theDark.mp3", type: "audio/mp3", artist: "JoeHoward" },
-            { title: "Lunar Lander", URL: "http://unsoundart.com/audio/LunarLander.mp3", type: "audio/mp3", artist: "JoeHoward" },
-        ]
+        this.songList = [null]
         this.currentCue = 0
+        this.initialized = false
         this.state = {
             currentSong: this.songList[this.currentCue]
         }
     }
 
     componentDidMount() {
-        this.playerEl = document.getElementById('player')
-        this.endHandler = x => this.next_btnHandler()
-        this.playerEl.addEventListener('ended', this.endHandler)
+        fetch('./playlist/playlist.json').then(response => {
+            return response.json();
+        }).then(data => {
+            this.songList = data.tracks
+            this.setState({
+                currentSong: this.songList[this.currentCue]
+            })
+        }).catch(err => {
+            console.log("Error Reading data " + err);
+        });
     }
 
     componentWillUnmount() {
         this.playerEl.removeEventListener("ended", this.endHandler)
+    }
+
+    componentDidUpdate() {
+        if (this.initialized === false && this.state.currentSong !== null) this.initialize()
+    }
+
+    initialize = () => {
+        // console.log("initialize only once")
+        this.initialized = true
+        this.playerEl = document.getElementById('player')
+        this.endHandler = x => this.next_btnHandler()
+        this.playerEl.addEventListener('ended', this.endHandler)
     }
 
     play_btnHandler = () => {
@@ -66,17 +81,24 @@ class AudioPlayer extends React.Component {
     }
 
     render() {
+        // console.log("this.state.currentSong", this.state.currentSong)
+        if (this.state.currentSong === null) return <h1>loading</h1>
+
         return (
             <Container>
-                <KnockoutText ID="React_knockout" txt="REACT" fontSize="90px" offset_x="" offset_y="100%"
+                <KnockoutText ID="React_knockout" txt="REACT"
+                    fontSize="90px" offset_x="" offset_y="100%"
                     src="https://media3.giphy.com/media/5UH51qWQaShz7KCug8/giphy.gif"
                 />
 
-                <KnockoutText ID="AudioPlayer_knockout" txt="AudioPlayer" fontSize="70px" offset_x="" offset_y=""
-                    src="https://media2.giphy.com/media/8wfmBZEtM3x4mGs2bz/giphy.gif"
+                <Title >AudioPlayer</Title>
+
+                <KnockoutText ID="AudioPlayer_knockout" txt={this.state.currentSong.title}
+                    fontSize="50px" offset_x="" offset_y="-140" colorOverlay={true}
+                    src="https://media.giphy.com/media/l49FlFL6PPPxYKNEs/giphy.gif"
+
                 />
 
-                <SongTitle>{this.state.currentSong.title}</SongTitle>
                 <ArtistName>by {this.state.currentSong.artist}</ArtistName>
 
                 <audio controls autoPlay id="player" src={this.songList[this.currentCue].URL} ></audio>
@@ -111,25 +133,28 @@ class AudioPlayer extends React.Component {
 export default AudioPlayer
 
 
-const Title = styled.h1``
-const SongTitle = styled.h3``
-const ArtistName = styled.h5``
+const Title = styled.h1`
+    margin-top: 0;
+`
+const ArtistName = styled.h5`
+    margin-top: 0
+`
 const Credit = styled.p`
-    font-size: 0.85rem
+    font-size: 0.85rem;
 `
 const Playlist = styled.table`
-    width: 100%
+    width: 100%;
     margin-top: 3rem;
     margin-bottom: 3rem;
 `
-const SongList = styled.tbody`
-`
+const SongList = styled.tbody``
 const SongListItem = styled.tr`
     cursor: pointer;
     display: flex;
     justify-content: flex-start;       
+    color: #2288fe;
     :hover {
-        color: skyblue;
+        color: white;
     }
     justify-content: space-between;
     .playIndicator {
@@ -139,22 +164,19 @@ const SongListItem = styled.tr`
 const Container = styled.div`
     margin: 2rem;
     padding: 2rem;
-    border-radius: 25px;
-    box-shadow: inset 0 0 5px 5px skyblue;
-    button {
-        color: #113ff6;
-        background: #ccccff;
-        font-size: 2rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
+    border-radius: 20px;
+    box-shadow: inset 0 0 5px 5px #233498;
+    background: linear-gradient(180deg, black, #243968);
 `
 const Controls = styled.div`
     margin-top: 1.5rem;
     padding: 1rem;
     border-radius: 2rem;
-    box-shadow:  0 0 5px 5px skyblue;
-    background: linear-gradient(0deg, black, transparent);
+    box-shadow:  0 0 5px 5px #2439c8;
+    // background: linear-gradient(0deg, black, transparent);
+    background: url("https://media3.giphy.com/media/5UH51qWQaShz7KCug8/giphy.gif");
+    background-size: cover;
+    background-position: 0px 300px ;
     display: flex;
     justify-content: center;
     .button-start {
@@ -162,5 +184,17 @@ const Controls = styled.div`
     }
     .button-end {
         border-radius: 0 1rem 1rem 0;
+    }
+    button {
+        box-shadow: inset 0 0 3px 3px #4354f8;
+        border: 0;
+        color: #aaaaff;
+        background: linear-gradient(0deg, #233498, black);
+        font-size: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;    
+        :hover {
+            color: white;
+        }
     }
 `

@@ -11,10 +11,10 @@ class KnockoutText extends React.Component {
         <svg viewBox="0 0 500 80">
           <pattern
             id={`p-img_${this.props.ID}`}
-            viewBox="0 0 300 100"
+            viewBox="0 0 500 100"
             patternUnits="userSpaceOnUse"
-            width="200%"
-            height="200%"
+            width="300%"
+            height="300%"
             x={offest_x}
             y={offest_y}
           >
@@ -33,11 +33,13 @@ class KnockoutText extends React.Component {
           >
             {this.props.txt}
           </text>
-          <linearGradient id="gr-overlay" x1="0" y1="0" x2="100%" y2="100%">
+          {this.props.colorOverlay &&
+          <linearGradient id={`gr-overlay_${this.props.ID}`} x1="0" y1="0" x2="100%" y2="100%">
             <stop stopColor="hsla(50, 100%, 70%, 0.5)" offset="10%" />
             <stop stopColor="hsla(200, 100%, 60%, 0.5)" offset="50%" />
             <stop stopColor="hsla(320, 100%, 50%, 0.5)" offset="90%" />
           </linearGradient>
+          }
           <text
             textAnchor="middle"
             x="50%"
